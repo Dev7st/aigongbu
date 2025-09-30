@@ -1,0 +1,38 @@
+name: front-service
+
+replicaCount: 1               # HPA 안 쓸 경우 수동 복제 수 지정
+
+nodeSelector:
+  nodegroup-type: first
+
+image:
+  repository: 879381276515.dkr.ecr.ap-northeast-2.amazonaws.com/aigongbu/service-images
+  tag: 99cd7645cd60853fe58657b7ed156a2880a21397
+  pullPolicy: IfNotPresent
+
+containerPort: 80
+
+resources:                    # 오토 스케일 기반 마련
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 100m
+    memory: 128Mi
+
+service:
+  protocol: TCP
+  port: 80
+  targetPort: 80
+  type: ClusterIP
+
+ingress:
+  hosts:
+    - aigongbu.store
+    - www.aigongbu.store
+  subnets: subnet-03eedfd68084ed958,subnet-0f93cd897bbfa1938
+  securityGroups: sg-092e9de239e2f3c69
+  certificateArn: arn:aws:acm:ap-northeast-2:879381276515:certificate/4649a51f-ffb4-4aec-bca5-fb9fdcee7673
+
+hpa:
+  enabled: false
