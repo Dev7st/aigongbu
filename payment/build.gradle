@@ -1,0 +1,109 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.4'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'jacoco'
+}
+
+group = 'org.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+ext {
+    springCloudVersion = "2024.0.1"
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
+    implementation 'org.springframework.cloud:spring-cloud-stream-binder-rabbit'
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    implementation 'org.springframework.cloud:spring-cloud-starter-vault-config'
+    implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    runtimeOnly 'io.asyncer:r2dbc-mysql'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.projectreactor:reactor-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
+    }
+}
+
+test {
+    useJUnitPlatform()  // JUnit5 사용 설정 (중복이라도 명시적으로 설정)
+    finalizedBy jacocoTestReport  // 테스트 후 리포트 생성하도록 설정
+}
+
+jacoco {
+    toolVersion = "0.8.10"
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        html.required.set(true)
+        xml.required.set(true)
+        csv.required.set(true)
+        html.outputLocation.set(file("$buildDir/reports/jacoco"))
+    }
+    classDirectories.setFrom(
+            files(fileTree(
+                    dir: "$buildDir/classes/java/main",
+                    includes: [
+                            'org/example/paymentservice/purchase/service/**'
+                    ],
+                    excludes: [
+                            'org/example/paymentservice/purchase/service/FailedPurchaseRecoveryScheduler*'
+                    ]
+            ))
+    )
+}
+
+jacocoTestCoverageVerification {
+    classDirectories.setFrom(
+            files(fileTree(
+                    dir: "$buildDir/classes/java/main",
+                    includes: [
+                            'org/example/paymentservice/purchase/service/**'
+                    ],
+                    excludes: [
+                            'org/example/paymentservice/purchase/service/FailedPurchaseRecoveryScheduler*'
+                    ]
+            ))
+    )
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit {
+                counter = 'INSTRUCTION'
+                value = 'COVEREDRATIO'
+                minimum = 0.8
+            }
+        }
+    }
+}
+
+check.dependsOn jacocoTestCoverageVerification
