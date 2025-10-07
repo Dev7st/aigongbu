@@ -1,0 +1,89 @@
+services:
+
+  team-mysql:
+    image: "mysql:latest"
+    container_name: "team-mysql"
+    ports:
+      - 3307:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=12341234
+      - TZ=Asia/Seoul  
+    volumes:
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./mysql/conf.d:/etc/mysql/conf.d
+
+  team-redis:
+    image: "redis:latest"
+    container_name: "team-redis"
+    ports:
+      - 6379:6379
+    environment:
+      - REDIS_PASSWORD=12341234
+      - TZ=Asia/Seoul 
+    command: ["redis-server", "--requirepass", "12341234"]
+
+  team-rabbitmq:
+    image: "rabbitmq:management"
+    container_name: "team-rabbitmq"
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=12341234
+      - TZ=Asia/Seoul
+    volumes:
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+
+  team-vault:
+    image: hashicorp/vault:1.14.4
+    container_name: "team-vault"
+    cap_add:
+      - IPC_LOCK
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=myroot
+      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
+      - TZ=Asia/Seoul
+    ports:
+      - 8200:8200
+
+  team-zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: "team-zookeeper"
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+          
+  team-mongodb:
+    image: mongo:6.0
+    container_name: ai_code_helper
+    ports:
+      - 27017:27017
+    environment:
+      - TZ=Asia/Seoul
+    volumes:
+      - ./mongo/data:/data/db
+
+  team-kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: "team-kafka"
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: team-zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_HEAP_OPTS: "-Xmx256M -Xms128M" # ✅ JVM 메모리 제한
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M # 조금 넉넉하게
