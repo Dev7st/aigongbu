@@ -1,0 +1,28 @@
+name: config-service
+
+replicaCount: 1
+
+image:
+  repository: 879381276515.dkr.ecr.ap-northeast-2.amazonaws.com/aigongbu/service-images
+  tag: 0850a74d2db92d6bad22192d38d13bbcc653c33d
+  pullPolicy: IfNotPresent
+
+containerPort: 80
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 150m
+    memory: 256Mi
+
+service:
+  type: ClusterIP
+  port: 80
+
+env:
+  - name: SPRING_PROFILES_ACTIVE
+    value: dev
+
+

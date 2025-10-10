@@ -1,0 +1,16 @@
+server:
+  port: 80
+
+spring:
+  application:
+    name: config-service
+  cloud:
+    config:
+      server:
+        git:
+          uri: ${CONFIG_GIT_URI}
+          username: ${CONFIG_GIT_USERNAME}
+          password: ${CONFIG_GIT_PASSWORD}
+          clone-on-start: true
+          force-pull: true
+          default-label: main
