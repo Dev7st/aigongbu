@@ -1,0 +1,15 @@
+server:
+  port: 9002
+
+spring:
+  application:
+    name: payment-service
+
+  r2dbc:
+    url: r2dbc:mysql://localhost:3307/order
+    username: root
+    password: 12341234
+
+webclient:
+  portone-uri: https://api.iamport.kr
+  lecture-uri: http://localhost:9004

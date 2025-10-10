@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: gateway-service
+
+  cloud:
+      httpclient:
+        connect-timeout: 5000
+        response-timeout: 180s
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        permitted-number-of-calls-in-half-open-state: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 15000
+
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 180s

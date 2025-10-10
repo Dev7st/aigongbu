@@ -1,0 +1,11 @@
+server:
+  port: 80
+
+spring:
+  application:
+    name: notibot-service
+  datasource:
+    url: jdbc:mysql://${db-host}:${db-port}/notitable
+
+team:
+  auth-service-url: http://auth-service:80

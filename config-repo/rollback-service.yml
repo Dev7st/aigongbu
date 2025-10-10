@@ -1,0 +1,15 @@
+
+spring:
+  application:
+    name: rollback-service
+
+  cloud:
+    function:
+      definition: rollback
+    stream:
+      bindings:
+        rollback-in-0:
+          destination: rollback-request
+          group: ${spring.application.name}
+        rollback-out-0:
+          destination: rollback-response

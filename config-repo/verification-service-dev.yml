@@ -1,0 +1,15 @@
+server:
+  port: 80
+spring:
+  application:
+    name: verification-service
+  cloud:
+    function:
+      definition: verify
+    stream:
+      bindings:
+        verify-in-0:
+          destination: verify-request
+          group: ${spring.application.name}
+        verify-out-0:
+          destination: verify-response

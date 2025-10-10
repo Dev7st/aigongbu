@@ -1,0 +1,21 @@
+server:
+  port: 80
+spring:
+  application:
+    name: rollback-service
+  r2dbc:
+    url: r2dbc:mysql://${db-host}:${db-port}/order
+    username: ${db-username}
+    password: ${db-password}
+  cloud:
+    function:
+      definition: rollback
+    stream:
+      bindings:
+        rollback-in-0:
+          destination: rollback-request
+          group: ${spring.application.name}
+        rollback-out-0:
+          destination: rollback-response
+webclient:
+  lecture-uri: http://lecture-service:80

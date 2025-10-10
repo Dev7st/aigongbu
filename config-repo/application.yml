@@ -1,0 +1,40 @@
+
+spring:
+  jackson:
+    default-property-inclusion: non_null
+
+  messages:
+    encoding: UTF-8
+
+  data:
+    redis:
+      port: 6379
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  cloud:
+    aws:
+      credentials:
+        access-key: ${aws-access-key}
+        secret-key: ${aws-secret-key}
+      region:
+        static: ap-northeast-2
+      s3:
+        bucket: aigongbu-default-bucket
+
+webclient:
+  portone-uri: https://api.iamport.kr
+
+portone:
+  imp-key: ${portone-imp-key}
+  imp-secret: ${portone-imp-secret}
+
+jwt:
+  issuer: ${jwt-issuer}
+  secret_key: ${jwt-secret}
+
+#logging:
+#  level:
+#    root: INFO
+#    org.springframework.web: INFO

@@ -1,0 +1,20 @@
+server:
+  port: 80
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 250MB
+
+  datasource:
+    url: jdbc:mysql://${db-host}:${db-port}/lecture?useUnicode=true&characterEncoding=utf8
+
+team:
+  auth-service-url: http://auth-service:80
+
+#logging:
+#  level:
+#    org.springframework.cloud.vault: DEBUG
+#    org.hibernate.SQL: DEBUG
+#    org.hibernate.type.descriptor.sql.BasicBinder: TRACE

@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: payment-service
+
+  cloud:
+    function:
+      definition: verified;rollBacked
+    stream:
+      bindings:
+        verified-in-0:
+          destination: verify-response
+          group: ${spring.application.name}
+        rollBacked-in-0:
+          destination: rollback-response
+          group: ${spring.application.name}
+        verify-out-0:
+          destination: verify-request
+        rollback-out-0:
+          destination: rollback-request
+      rabbit:
+        bindings:
+          verify-out-0:
+            producer:
+              transacted: true
+          rollback-out-0:
+            producer:
+              transacted: true
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
